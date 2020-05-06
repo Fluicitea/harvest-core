@@ -1,0 +1,16 @@
+[
+{
+  "modid": "harvestcore",
+  "name": "Harvest Core",
+  "description": "Harvest level core mod",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ShadowVappy"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
