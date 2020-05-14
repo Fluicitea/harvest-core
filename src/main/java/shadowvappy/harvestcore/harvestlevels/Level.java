@@ -19,13 +19,28 @@
 
 package shadowvappy.harvestcore.harvestlevels;
 
+import javax.annotation.Nullable;
+
 public class Level {
 	private String name;
 	private int level;
+	private String modid;
+	private String color;
 	
 	public Level(String name, int level) {
+		this(name, level, "vanilla");
+	}
+	public Level(String name, String modid, int level) {
+		this(name, level, modid, null);
+	}
+	public Level(String name, int level, @Nullable String color) {
+		this(name, level, "vanilla", color);
+	}
+	public Level(String name, int level, String modid, @Nullable String color) {
 		setName(name);
 		setLevel(level);
+		setModId(modid);
+		setColor(color);
 	}
 	
 	public String getName() {
@@ -40,5 +55,19 @@ public class Level {
 	}
 	public void setLevel(int level) {
 		this.level = level;
+	}
+	
+	public String getModId() {
+		return modid;
+	}
+	public void setModId(String modid) {
+		this.modid = modid;
+	}
+	
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
 	}
 }

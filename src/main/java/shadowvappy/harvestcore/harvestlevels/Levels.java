@@ -22,10 +22,16 @@ package shadowvappy.harvestcore.harvestlevels;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.util.text.TextFormatting;
+import shadowvappy.harvestcore.util.LogHelper;
+import slimeknights.tconstruct.tools.TinkerMaterials;
+
 public class Levels 
 {
-	/** List in which to store ignored mods. */
-	public static List<String> modIgnoreList = new ArrayList<String>();
+	private static final Logger LOG = LogHelper.getLogger("Levels");
+	
 	/** List in which to store vanilla harvest levels. */
 	public static List<Level> levelList = new ArrayList<Level>();
 	public static List<Level> originalLevelList = new ArrayList<Level>();
@@ -34,12 +40,12 @@ public class Levels
 	public static List<Level> originalTinkerLevelList = new ArrayList<Level>();
 	
 	/* Vanilla Levels */
-	public static final Level STONE = new Level("Stone", 0);
-	public static final Level IRON = new Level("Iron", 1);
-	public static final Level DIAMOND = new Level("Diamond", 2);
-	public static final Level OBSIDIAN = new Level("Obsidian", 3);
+	public static final Level STONE = new Level("Stone", 0, TinkerMaterials.stone.getTextColor());
+	public static final Level IRON = new Level("Iron", 1, TinkerMaterials.iron.getTextColor());
+	public static final Level DIAMOND = new Level("Diamond", 2, TextFormatting.AQUA.toString());
+	public static final Level OBSIDIAN = new Level("Obsidian", 3, TinkerMaterials.obsidian.getTextColor());
 	/* Tinkers Levels */
-	public static final Level COBALT = new Level("Cobalt", 4);
+	public static final Level COBALT = new Level("Cobalt", 4, TinkerMaterials.cobalt.getTextColor());
 	
 	public static void preInit() {
 		setupBaseLevelLists();
@@ -62,34 +68,57 @@ public class Levels
 		originalTinkerLevelList = tinkerLevelList;
 	}
 	
-	public static void addModToIgnoreList(String modid) {
-		if(!modIgnoreList.contains(modid))
-			modIgnoreList.add(modid);
-	}
-	public static void addLevel(String name, int level) {
-		Level harvestLevel = new Level(name, level);
+	/**
+	 * Add a harvest level to the vanilla list.
+	 * Vanilla harvest levels: Wood/Gold Pickaxe = 0; Stone Pickaxe = 1; Iron Pickaxe = 2; Diamond Pickaxe = 3;
+	 * 
+	 * @param The name for the harvest level to add
+	 * @param The harvest level to add, if you want to add before a particular level, give that level's harvest level
+	 * @param The modid of the mod adding the harvest level
+	 */
+	public static void addLevel(String name, int level, String modid) {
+		Level harvestLevel = new Level(name, modid, level);
 		
-		if(levelList.get(level) != null) {
-			List<Level> newList = levelList.subList(level, levelList.size()-1);
-			levelList.set(level, harvestLevel);
-			for(Level postLevel : newList) {
-				levelList.set(postLevel.getLevel()+1, postLevel);
+		if(level >= 0) {
+			boolean hasLevel = false;
+			for(Level existingLevel : levelList) {
+				if(existingLevel.getName().equalsIgnoreCase(name)) {
+					hasLevel = true;
+					break;
+				}
+			}
+			if(!hasLevel) {
+				levelList.add(level, harvestLevel);
 			}
 		}else {
-			levelList.add(harvestLevel);
+			LOG.warn("Level can not be a negative number, aborting. Please use a level of 0 to add a mine level below stone.");
 		}
 	}
-	public static void addTinkerLevel(String name, int level) {
-		Level harvestLevel = new Level(name, level);
+	/**
+	 * Add a harvest level to the tinker list.
+	 * Vanilla tconstruct harvest levels: Stone = 0; Iron = 1; Diamond = 2; Obsidian = 3; Cobalt = 4;
+	 * 
+	 * @param The name for the harvest level to add
+	 * @param The harvest level to add, if you want to add before a particular level, give that level's harvest level
+	 * @param The modid of the mod adding the harvest level
+	 * @param The color for the harvest level to be set in the tconstruct book, please use the tconstruct material color if possible
+	 */
+	public static void addTinkerLevel(String name, int level, String modid, String color) {
+		Level harvestLevel = new Level(name, level, modid, color);
 		
-		if(tinkerLevelList.get(level) != null) {
-			List<Level> newList = tinkerLevelList.subList(level, tinkerLevelList.size()-1);
-			tinkerLevelList.set(level, harvestLevel);
-			for(Level postLevel : newList) {
-				tinkerLevelList.set(postLevel.getLevel()+1, postLevel);
+		if(level >= 0) {
+			boolean hasLevel = false;
+			for(Level existingLevel : tinkerLevelList) {
+				if(existingLevel.getName().equalsIgnoreCase(name)) {
+					hasLevel = true;
+					break;
+				}
+			}
+			if(!hasLevel) {
+				tinkerLevelList.add(level, harvestLevel);
 			}
 		}else {
-			tinkerLevelList.add(harvestLevel);
+			LOG.warn("Level can not be a negative number, aborting. Please use a level of 0 to add a mine level below stone.");
 		}
 	}
 }

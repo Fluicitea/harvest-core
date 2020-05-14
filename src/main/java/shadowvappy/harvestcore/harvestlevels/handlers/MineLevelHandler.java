@@ -19,6 +19,8 @@
 
 package shadowvappy.harvestcore.harvestlevels.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
@@ -33,27 +35,29 @@ import shadowvappy.harvestcore.util.LogHelper;
 
 public class MineLevelHandler 
 {
-	private static final Logger LOG = LogHelper.getLogger("MineLevel");
+	public static MineLevelHandler instance;
+	private static final Logger LOG = LogHelper.getLogger("LevelHandler");
 	
-	public static void preInit() {
+	public static void postInit() {
 		addMineLevels();
 	}
 	
 	private static void addMineLevels() {
 		Level originalLevel = Levels.originalLevelList.get(0);
 		for(Level level : Levels.levelList) {
-			if(level.getName() == originalLevel.getName()) {
+			if(level.getName() == originalLevel.getName() && originalLevel.getLevel()+1 != Levels.originalLevelList.size()) {
 				originalLevel = Levels.originalLevelList.get(originalLevel.getLevel()+1);
 			}else {
-				outerloopblock:
 				for(int i=0; i<4096; i++) {
 					Block block = Block.getBlockById(i);
 					if(block != null) {
 						String harvestTool = block.getHarvestTool(block.getDefaultState());
 						int harvestLevel = block.getHarvestLevel(block.getDefaultState());
-						for(String ignoreMod : Levels.modIgnoreList) {
-							if(block.getUnlocalizedName().contains(ignoreMod))
-								continue outerloopblock;
+						if(block.getUnlocalizedName().contains(level.getModId()))
+							continue;
+						if(block.getUnlocalizedName().contains(level.getName())) {
+							block.setHarvestLevel(harvestTool, level.getLevel()-1);
+							continue;
 						}
 						if(harvestLevel > level.getLevel()-1
 						   && block != block.getBlockFromName("minecraft:lapis_ore")
@@ -62,42 +66,49 @@ public class MineLevelHandler
 						}
 					}
 				}
-				outerloopitem:
 				for(int i=0; i<32768; i++) {
 					Item item = ItemTool.getItemById(i);
 					if(item != null) {
-						for(String ignoreMod : Levels.modIgnoreList) {
-							if(item.getUnlocalizedName().contains(ignoreMod))
-								continue outerloopitem;
-						}
+						if(item.getUnlocalizedName().contains(level.getModId()))
+							continue;
 						Set<String> toolClasses = item.getToolClasses(new ItemStack(item));
 						if(toolClasses.contains("sword")) {
 							int harvestLevel = item.getHarvestLevel(new ItemStack(item), "sword", null, null);
-							if(harvestLevel > level.getLevel()) {
+							if(item.getUnlocalizedName().contains(level.getName())) {
+								item.setHarvestLevel("sword", level.getLevel());
+							}else if(harvestLevel > level.getLevel()) {
 								item.setHarvestLevel("sword", harvestLevel+1);
 							}
 						}
 						if(toolClasses.contains("pickaxe")) {
 							int harvestLevel = item.getHarvestLevel(new ItemStack(item), "pickaxe", null, null);
-							if(harvestLevel > level.getLevel()) {
+							if(item.getUnlocalizedName().contains(level.getName())) {
+								item.setHarvestLevel("pickaxe", level.getLevel());
+							}else if(harvestLevel > level.getLevel()) {
 								item.setHarvestLevel("pickaxe", harvestLevel+1);
 							}
 						}
 						if(toolClasses.contains("axe")) {
 							int harvestLevel = item.getHarvestLevel(new ItemStack(item), "axe", null, null);
-							if(harvestLevel > level.getLevel()) {
+							if(item.getUnlocalizedName().contains(level.getName())) {
+								item.setHarvestLevel("axe", level.getLevel());
+							}else if(harvestLevel > level.getLevel()) {
 								item.setHarvestLevel("axe", harvestLevel+1);
 							}
 						}
 						if(toolClasses.contains("spade")) {
 							int harvestLevel = item.getHarvestLevel(new ItemStack(item), "spade", null, null);
-							if(harvestLevel > level.getLevel()) {
+							if(item.getUnlocalizedName().contains(level.getName())) {
+								item.setHarvestLevel("spade", level.getLevel());
+							}else if(harvestLevel > level.getLevel()) {
 								item.setHarvestLevel("spade", harvestLevel+1);
 							}
 						}
 						if(toolClasses.contains("hoe")) {
 							int harvestLevel = item.getHarvestLevel(new ItemStack(item), "hoe", null, null);
-							if(harvestLevel > level.getLevel()) {
+							if(item.getUnlocalizedName().contains(level.getName())) {
+								item.setHarvestLevel("hoe", level.getLevel());
+							}else if(harvestLevel > level.getLevel()) {
 								item.setHarvestLevel("hoe", harvestLevel+1);
 							}
 						}

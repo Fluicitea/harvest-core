@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import shadowvappy.harvestcore.harvestlevels.Levels;
 import shadowvappy.harvestcore.harvestlevels.handlers.MineLevelHandler;
+import shadowvappy.harvestcore.harvestlevels.handlers.TinkerMineLevelHandler;
 import shadowvappy.harvestcore.proxy.IProxy;
 import shadowvappy.harvestcore.util.ModChecker;
 import shadowvappy.harvestcore.util.Reference;
@@ -46,19 +47,23 @@ public class Main
 	public static IProxy proxy;
 	
 	@EventHandler
-    public static void preInit(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event) {
 		modChecker = new ModChecker();
 		modChecker.printSuccessMessage();
 		Levels.preInit();
-		MineLevelHandler.preInit();
 	}
 	
 	@EventHandler
-    public static void init(FMLInitializationEvent event) {}
+    public void init(FMLInitializationEvent event) {
+		TinkerMineLevelHandler.instance.init();
+	}
 	
 	@EventHandler
-    public static void postInit(FMLPostInitializationEvent event) {}
+    public void postInit(FMLPostInitializationEvent event) {
+		MineLevelHandler.postInit();
+		TinkerMineLevelHandler.postInit();
+	}
 	
 	@EventHandler
-    public static void postGameStart(FMLServerStartedEvent event) {}
+    public void postGameStart(FMLServerStartedEvent event) {}
 }

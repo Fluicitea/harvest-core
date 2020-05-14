@@ -2,7 +2,7 @@
 {
   "modid": "harvestcore",
   "name": "Harvest Core",
-  "description": "Harvest level core mod",
+  "description": "ShadowVappy library mod and harvest level core mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
