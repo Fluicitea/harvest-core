@@ -28,15 +28,15 @@ public class Level {
 	private String color;
 	
 	public Level(String name, int level) {
-		this(name, level, "vanilla");
+		this(name, "vanilla", level);
 	}
 	public Level(String name, String modid, int level) {
-		this(name, level, modid, null);
+		this(name, modid, level, null);
 	}
 	public Level(String name, int level, @Nullable String color) {
-		this(name, level, "vanilla", color);
+		this(name, "vanilla", level, color);
 	}
-	public Level(String name, int level, String modid, @Nullable String color) {
+	public Level(String name, String modid, int level, @Nullable String color) {
 		setName(name);
 		setLevel(level);
 		setModId(modid);

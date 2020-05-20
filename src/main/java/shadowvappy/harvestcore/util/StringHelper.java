@@ -19,15 +19,29 @@
 
 package shadowvappy.harvestcore.util;
 
-import org.apache.logging.log4j.Logger;
-
-import net.minecraftforge.fml.common.Loader;
-
-public class ModChecker 
+public class StringHelper 
 {
-	public static boolean isTinkersConstructLoaded;
+	/**
+	 * Capitalize the first letter of a given string.
+	 * @param string The string to capitalize.
+	 * @return The capitalized string.
+	 */
+	public static String capitalize(String string) {
+		String capitalizedString = string.substring(0, 1).toUpperCase() + string.substring(1);
+		return capitalizedString;
+	}
 	
-	public ModChecker() {
-		this.isTinkersConstructLoaded = Loader.isModLoaded("tconstruct");
+	/**
+	 * Converts an unlocalized item name from "material_item" form to proper oreDict "itemMaterial" form.
+	 * @param itemName The unlocalized name to convert.
+	 * @return The oreDict entry name.
+	 */
+	public static String getOreDictName(String itemName) {
+		String[] Split = itemName.split(":");
+		String[] Split_Name = Split[1].split("_");
+		String Material_Name = capitalize(Split_Name[0]);
+		String Type_Name = Split_Name[1];
+		String name = Type_Name + Material_Name;
+		return name;
 	}
 }

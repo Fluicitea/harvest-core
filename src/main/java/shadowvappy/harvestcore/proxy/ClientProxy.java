@@ -19,7 +19,22 @@
 
 package shadowvappy.harvestcore.proxy;
 
+import shadowvappy.harvestcore.config.ModConfig;
+import shadowvappy.harvestcore.harvestlevels.handlers.TinkerMineLevelHandler;
+import shadowvappy.harvestcore.util.ModChecker;
+
 public class ClientProxy implements IProxy
 {
-	
+	@Override
+	public void preInit() {}
+
+	@Override
+	public void init() {}
+
+	@Override
+	public void postInit() {
+		if(ModChecker.isTinkersConstructLoaded) {
+			TinkerMineLevelHandler.addLevelsToBook();
+		}
+	}
 }

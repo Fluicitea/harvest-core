@@ -29,14 +29,16 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import shadowvappy.harvestcore.config.ModConfig;
 import shadowvappy.harvestcore.harvestlevels.Level;
 import shadowvappy.harvestcore.harvestlevels.Levels;
 import shadowvappy.harvestcore.util.LogHelper;
+import shadowvappy.harvestcore.util.ModChecker;
 
 public class MineLevelHandler 
 {
 	public static MineLevelHandler instance;
-	private static final Logger LOG = LogHelper.getLogger("LevelHandler");
+	private static final Logger LOG = LogHelper.getLogger(null, "LevelHandler");
 	
 	public static void postInit() {
 		addMineLevels();
@@ -44,10 +46,14 @@ public class MineLevelHandler
 	
 	private static void addMineLevels() {
 		Level originalLevel = Levels.originalLevelList.get(0);
-		for(Level level : Levels.levelList) {
-			if(level.getName() == originalLevel.getName() && originalLevel.getLevel()+1 != Levels.originalLevelList.size()) {
-				originalLevel = Levels.originalLevelList.get(originalLevel.getLevel()+1);
+		int nonVanillaLevels = 0;
+		for(Level level : (ModChecker.isTinkersConstructLoaded ? Levels.tinkerLevelList:Levels.levelList)) {
+			if(level.getName().equalsIgnoreCase(originalLevel.getName())) {
+				if((originalLevel.getLevel()+1)-nonVanillaLevels < (ModChecker.isTinkersConstructLoaded ? Levels.originalTinkerLevelList.size():Levels.originalLevelList.size())) {
+					originalLevel = (ModChecker.isTinkersConstructLoaded ? Levels.originalTinkerLevelList.get((originalLevel.getLevel()+1)-nonVanillaLevels):Levels.originalLevelList.get((originalLevel.getLevel()+1)-nonVanillaLevels));
+				}
 			}else {
+				nonVanillaLevels++;
 				for(int i=0; i<4096; i++) {
 					Block block = Block.getBlockById(i);
 					if(block != null) {
@@ -59,7 +65,7 @@ public class MineLevelHandler
 							block.setHarvestLevel(harvestTool, level.getLevel()-1);
 							continue;
 						}
-						if(harvestLevel > level.getLevel()-1
+						if(harvestLevel >= level.getLevel()
 						   && block != block.getBlockFromName("minecraft:lapis_ore")
 						   && block != block.getBlockFromName("minecraft:lapis_block")) {
 							block.setHarvestLevel(harvestTool, harvestLevel+1);

@@ -27,22 +27,25 @@ import org.apache.logging.log4j.Logger;
 public class LogHelper 
 {
 	/**
-	 * Method for generating a logger with name set as the mod id.
+	 * Method for generating a logger with name set as the modid.
 	 * 
-	 * @param The type of the logger.
+	 * @param modid The modid for the logger.
+	 * @return The logger with the name set.
 	 */
-	public static Logger getLogger() {
-		String name = Reference.MODID;
+	public static Logger getLogger(@Nullable String modid) {
+		String name = modid != null ? modid:Reference.MODID;
 		Logger logger = LogManager.getFormatterLogger(name);
 		return logger;
 	}
 	/**
-	 * Method for generating a logger with name set as the mod id with a type label.
+	 * Method for generating a logger with name set as the modid with a type label.
 	 * 
-	 * @param The type of the logger.
+	 * @param modid The modid for the logger.
+	 * @param type The label of the logger.
+	 * @return The logger with the name set.
 	 */
-	public static Logger getLogger(@Nullable String type) {
-		String name = Reference.MODID;
+	public static Logger getLogger(@Nullable String modid, String type) {
+		String name = modid != null ? modid:Reference.MODID;
 		Logger logger = LogManager.getFormatterLogger(name + ": " + type);
 		return logger;
 	}

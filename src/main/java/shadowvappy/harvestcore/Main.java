@@ -19,6 +19,8 @@
 
 package shadowvappy.harvestcore;
 
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -46,22 +48,21 @@ public class Main
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static IProxy proxy;
 	
+	{Levels.preLoad();}
+	
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 		modChecker = new ModChecker();
-		modChecker.printSuccessMessage();
-		Levels.preInit();
+		TinkerMineLevelHandler.preInit();
 	}
 	
 	@EventHandler
-    public void init(FMLInitializationEvent event) {
-		TinkerMineLevelHandler.instance.init();
-	}
+    public void init(FMLInitializationEvent event) {}
 	
 	@EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 		MineLevelHandler.postInit();
-		TinkerMineLevelHandler.postInit();
+		proxy.postInit();
 	}
 	
 	@EventHandler
