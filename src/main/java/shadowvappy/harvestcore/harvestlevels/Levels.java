@@ -22,13 +22,13 @@ package shadowvappy.harvestcore.harvestlevels;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.util.text.TextFormatting;
-import shadowvappy.harvestcore.config.ModConfig;
 import shadowvappy.harvestcore.util.LogHelper;
-import shadowvappy.harvestcore.util.Reference;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 
 public class Levels 
@@ -37,7 +37,8 @@ public class Levels
 	private static int added0 = 0, added1 = 0, added2 = 0, added3 = 0, added4 = 0, added5 = 0;
 	
 	/** List in which to store added harvest levels. */
-	private static List<Level> addLevelList = new ArrayList<Level>();
+	private static List<Level> addLevelListV = new ArrayList<Level>();
+	private static List<Level> addLevelListT = new ArrayList<Level>();
 	/** List in which to store vanilla harvest levels. */
 	public static List<Level> levelList = new ArrayList<Level>();
 	public static List<Level> originalLevelList = new ArrayList<Level>();
@@ -47,11 +48,11 @@ public class Levels
 	
 	public static Level level;
 	
-	public static void preLoad() {
+	public static final void preLoad() {
 		setupBaseLevelLists();
 	}
 	
-	public static void preInit() {
+	public static final void preInit() {
 		addVanillaLevels();
 		addTinkerLevels();
 	}
@@ -92,7 +93,8 @@ public class Levels
 	 * @param level The harvest level to add, <i>always</i> give the TConstruct level you wish to add your level before
 	 * @param color The color for the harvest level to be set in the TConstruct book, please use the TConstruct material color if possible
 	 */
-	public static void addLevel(String name, String modid, int level, String color) {
+	public static void addLevel(String name, String modid, int level, @Nullable String color) {
+		
 		if(level >= 0) {
 			boolean hasLevel = false;
 			for(Level existingLevel : originalTinkerLevelList) {
@@ -102,7 +104,7 @@ public class Levels
 				}
 			}
 			if(hasLevel == false) {
-				for(Level existingLevel : addLevelList) {
+				for(Level existingLevel : addLevelListT) {
 					if(name.equalsIgnoreCase(existingLevel.getName())) {
 						hasLevel = true;
 						break;
@@ -140,25 +142,8 @@ public class Levels
 					level += added0+added1+added2+added3+added4+added5;
 					added5++;
 				}
-				Level addLevel = new Level(name, modid, level, color);
-				if(addLevelList.size() > 0) {
-					for(Level existingLevel : addLevelList) {
-						if(level <= existingLevel.getLevel()) {
-							int index = addLevelList.indexOf(existingLevel);
-							List<Level> shiftedLevelList = addLevelList.subList(index, addLevelList.size());
-							for(Level shiftedLevel : shiftedLevelList) {
-								shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
-							}
-							addLevelList.add(index, addLevel);
-							hasLevel = true;
-							break;
-						}
-					}
-					if(hasLevel == false)
-						addLevelList.add(addLevel);
-				}else {
-					addLevelList.add(addLevel);
-				}
+				addVanillaLevel(name, modid, level, color);
+				addTinkerLevel(name, modid, level, color);
 			}
 		}else {
 			if(modid != null) {
@@ -168,9 +153,54 @@ public class Levels
 			}
 		}
 	}
+	private static void addVanillaLevel(String name, String modid, int level, String color) {
+		Level addLevel = new Level(name, modid, level, color);
+		boolean hasLevel = false;
+		if(addLevelListV.size() > 0) {
+			for(Level existingLevel : addLevelListV) {
+				if(level <= existingLevel.getLevel()) {
+					int index = addLevelListV.indexOf(existingLevel);
+					List<Level> shiftedLevelList = addLevelListV.subList(index, addLevelListV.size());
+					for(Level shiftedLevel : shiftedLevelList) {
+						shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+					}
+					addLevelListV.add(index, addLevel);
+					hasLevel = true;
+					break;
+				}
+			}
+			if(hasLevel == false)
+				addLevelListV.add(addLevel);
+		}else {
+			addLevelListV.add(addLevel);
+		}
+	}
+	private static void addTinkerLevel(String name, String modid, int level, String color) {
+		Level addLevel = new Level(name, modid, level, color);
+		boolean hasLevel = false;
+		if(addLevelListT.size() > 0) {
+			for(Level existingLevel : addLevelListT) {
+				if(level <= existingLevel.getLevel()) {
+					int index = addLevelListT.indexOf(existingLevel);
+					List<Level> shiftedLevelList = addLevelListT.subList(index, addLevelListT.size());
+					for(Level shiftedLevel : shiftedLevelList) {
+						shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+					}
+					addLevelListT.add(index, addLevel);
+					hasLevel = true;
+					break;
+				}
+			}
+			if(hasLevel == false)
+				addLevelListT.add(addLevel);
+		}else {
+			addLevelListT.add(addLevel);
+		}
+	}
 	
 	private static void addVanillaLevels() {
-		for(Level level : addLevelList) {
+		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListV).clone();
+		for(Level level : addList) {
 			if(level.getLevel() < levelList.size()) {
 				List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
 				for(Level shiftedLevel : shiftedLevelList) {
@@ -178,14 +208,15 @@ public class Levels
 				}
 				levelList.add(level.getLevel(), level);
 			}else {
-				if(level.getLevel() > levelList.get(levelList.size()-1).getLevel()+1)
-					level.setLevel(levelList.get(levelList.size()-1).getLevel()+1);
+				if(level.getLevel() > (levelList.get(levelList.size()-1).getLevel()+1))
+					level.setLevel((levelList.get(levelList.size()-1).getLevel()+1));
 				levelList.add(level);
 			}
 		}
 	}
 	private static void addTinkerLevels() {
-		for(Level level : addLevelList) {
+		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListT).clone();
+		for(Level level : addList) {
 			if(level.getLevel() < tinkerLevelList.size()) {
 				List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
 				for(Level shiftedLevel : shiftedLevelList) {
@@ -193,8 +224,8 @@ public class Levels
 				}
 				tinkerLevelList.add(level.getLevel(), level);
 			}else {
-				if(level.getLevel() > tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1)
-					level.setLevel(tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1);
+				if(level.getLevel() > (tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1))
+					level.setLevel((tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1));
 				tinkerLevelList.add(level);
 			}
 		}

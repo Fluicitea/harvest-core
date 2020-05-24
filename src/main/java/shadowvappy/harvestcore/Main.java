@@ -48,7 +48,10 @@ public class Main
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static IProxy proxy;
 	
-	{Levels.preLoad();}
+	{
+		Levels.preLoad();
+		Levels.addLevel("Test", Reference.MODID, 5, TextFormatting.AQUA.toString());
+	}
 	
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {

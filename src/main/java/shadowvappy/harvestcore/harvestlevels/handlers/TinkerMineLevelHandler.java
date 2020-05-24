@@ -68,6 +68,7 @@ public class TinkerMineLevelHandler
 			boolean levelIsVanilla = false;
 			int nonVanillaLevels = 0;
 			for(Level level : Levels.tinkerLevelList) {
+				LOG.info(level.getName() + ": " + level.getLevel());
 				if(level.getName().equalsIgnoreCase(originalLevel.getName())) {
 					if((originalLevel.getLevel()+1)-nonVanillaLevels < Levels.originalTinkerLevelList.size()) {
 						originalLevel = Levels.originalTinkerLevelList.get((originalLevel.getLevel()+1)-nonVanillaLevels);
@@ -90,6 +91,11 @@ public class TinkerMineLevelHandler
 				}else if(mat.equalsIgnoreCase("electrum") || mat.equalsIgnoreCase("silver")) {
 					if(level.getName().equalsIgnoreCase("diamond")) {
 						newStats = new HeadMaterialStats(headStats.durability, headStats.miningspeed, headStats.attack, level.getLevel());
+						break;
+					}
+				}else if(mat.equalsIgnoreCase("pigiron")) {
+					if(level.getName().equalsIgnoreCase("iron")) {
+						newStats = new HeadMaterialStats(headStats.durability, headStats.miningspeed, headStats.attack, level.getLevel()+1);
 						break;
 					}
 				}else if(mat.equalsIgnoreCase("prismarine")) {
