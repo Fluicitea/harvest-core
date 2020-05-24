@@ -146,10 +146,10 @@ public class Levels
 						if(level <= existingLevel.getLevel()) {
 							int index = addLevelList.indexOf(existingLevel);
 							List<Level> shiftedLevelList = addLevelList.subList(index, addLevelList.size());
-							addLevelList.add(index, addLevel);
 							for(Level shiftedLevel : shiftedLevelList) {
 								shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
 							}
+							addLevelList.add(index, addLevel);
 							hasLevel = true;
 							break;
 						}
@@ -173,10 +173,10 @@ public class Levels
 		for(Level level : addLevelList) {
 			if(level.getLevel() < levelList.size()) {
 				List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
-				levelList.add(level.getLevel(), level);
 				for(Level shiftedLevel : shiftedLevelList) {
 					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
 				}
+				levelList.add(level.getLevel(), level);
 			}else {
 				if(level.getLevel() > levelList.get(levelList.size()-1).getLevel()+1)
 					level.setLevel(levelList.get(levelList.size()-1).getLevel()+1);
@@ -188,10 +188,10 @@ public class Levels
 		for(Level level : addLevelList) {
 			if(level.getLevel() < tinkerLevelList.size()) {
 				List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
-				tinkerLevelList.add(level.getLevel(), level);
 				for(Level shiftedLevel : shiftedLevelList) {
 					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
 				}
+				tinkerLevelList.add(level.getLevel(), level);
 			}else {
 				if(level.getLevel() > tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1)
 					level.setLevel(tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1);
