@@ -34,7 +34,10 @@ import slimeknights.tconstruct.tools.TinkerMaterials;
 public class Levels 
 {
 	private static final Logger LOG = LogHelper.getLogger(null, "Levels");
+	private static int added0 = 0, added1 = 0, added2 = 0, added3 = 0, added4 = 0, added5 = 0;
 	
+	/** List in which to store added harvest levels. */
+	private static List<Level> addLevelList = new ArrayList<Level>();
 	/** List in which to store vanilla harvest levels. */
 	public static List<Level> levelList = new ArrayList<Level>();
 	public static List<Level> originalLevelList = new ArrayList<Level>();
@@ -46,6 +49,11 @@ public class Levels
 	
 	public static void preLoad() {
 		setupBaseLevelLists();
+	}
+	
+	public static void preInit() {
+		addVanillaLevels();
+		addTinkerLevels();
 	}
 	
 	private static void setupBaseLevelLists() {
@@ -75,37 +83,81 @@ public class Levels
 	}
 	
 	/**
-	 * Add a harvest level to the vanilla list. <br>
-	 * Vanilla harvest levels: Stone (Wood/Gold Pick) = 0; Iron (Stone pick) = 1; Diamond (Iron pick) = 2; Obsidian (Diamond pick) = 3;
+	 * Add a harvest level to the list. <br>
+	 * Must be placed before preInit. <br>
+	 * TConstruct harvest levels: Stone = 0; Iron = 1; Diamond = 2; Obsidian = 3; Cobalt = 4;
 	 * 
 	 * @param name The name for the harvest level to add
 	 * @param modid The modid of the mod adding the harvest level
-	 * @param level The harvest level to add, if you want to add before a particular level, give that level's harvest level
+	 * @param level The harvest level to add, <i>always</i> give the TConstruct level you wish to add your level before
+	 * @param color The color for the harvest level to be set in the TConstruct book, please use the TConstruct material color if possible
 	 */
-	public static void addLevel(String name, String modid, int level) {
-		Level harvestLevel = new Level(name, modid, level);
-		
+	public static void addLevel(String name, String modid, int level, String color) {
 		if(level >= 0) {
 			boolean hasLevel = false;
-			for(Level existingLevel : levelList) {
+			for(Level existingLevel : originalTinkerLevelList) {
 				if(name.equalsIgnoreCase(existingLevel.getName())) {
 					hasLevel = true;
 					break;
 				}
 			}
 			if(hasLevel == false) {
-				if(level > levelList.size()) {
-					levelList.add(harvestLevel);
-				}else {
-					if(ModConfig.addMineLevels) {
-						levelList.add(level, harvestLevel);
-						List<Level> newList = levelList.subList(level+1, levelList.size());
-						if(newList.size() > 0) {
-							for(Level newLevel : newList) {
-								newLevel.setLevel(newLevel.getLevel()+1);
+				for(Level existingLevel : addLevelList) {
+					if(name.equalsIgnoreCase(existingLevel.getName())) {
+						hasLevel = true;
+						break;
+					}
+				}
+			}
+			if(hasLevel == false) {
+				switch(level) {
+				case 0:
+					level += added0;
+					added0++;
+					break;
+				case 1:
+					level += added0+added1;
+					added1++;
+					break;
+				case 2:
+					level += added0+added1+added2;
+					added2++;
+					break;
+				case 3:
+					level += added0+added1+added2+added3;
+					added3++;
+					break;
+				case 4:
+					level += added0+added1+added2+added3+added4;
+					added4++;
+					break;
+				case 5:
+					level += added0+added1+added2+added3+added4+added5;
+					added5++;
+					break;
+				default:
+					level = 5;
+					level += added0+added1+added2+added3+added4+added5;
+					added5++;
+				}
+				Level addLevel = new Level(name, modid, level, color);
+				if(addLevelList.size() > 0) {
+					for(Level existingLevel : addLevelList) {
+						if(level <= existingLevel.getLevel()) {
+							int index = addLevelList.indexOf(existingLevel);
+							List<Level> shiftedLevelList = addLevelList.subList(index, addLevelList.size());
+							addLevelList.add(index, addLevel);
+							for(Level shiftedLevel : shiftedLevelList) {
+								shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
 							}
+							hasLevel = true;
+							break;
 						}
 					}
+					if(hasLevel == false)
+						addLevelList.add(addLevel);
+				}else {
+					addLevelList.add(addLevel);
 				}
 			}
 		}else {
@@ -116,48 +168,34 @@ public class Levels
 			}
 		}
 	}
-	/**
-	 * Add a harvest level to the tinker list. <br>
-	 * Must be placed before preInit. <br>
-	 * Vanilla tconstruct harvest levels: Stone = 0; Iron = 1; Diamond = 2; Obsidian = 3; Cobalt = 4;
-	 * 
-	 * @param name The name for the harvest level to add
-	 * @param modid The modid of the mod adding the harvest level
-	 * @param level The harvest level to add, if you want to add before a particular level, give that level's harvest level
-	 * @param color The color for the harvest level to be set in the tconstruct book, please use the tconstruct material color if possible
-	 */
-	public static void addTinkerLevel(String name, String modid, int level, String color) {
-		/** The level form of the harvest level to add, to be added to the list. */
-		Level harvestLevel = new Level(name, modid, level, color);
-		
-		if(level >= 0) {
-			boolean hasLevel = false;
-			for(Level existingLevel : tinkerLevelList) {
-				if(name.equalsIgnoreCase(existingLevel.getName())) {
-					hasLevel = true;
-					break;
+	
+	private static void addVanillaLevels() {
+		for(Level level : addLevelList) {
+			if(level.getLevel() < levelList.size()) {
+				List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
+				levelList.add(level.getLevel(), level);
+				for(Level shiftedLevel : shiftedLevelList) {
+					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
 				}
-			}
-			if(hasLevel == false) {
-				if(level > tinkerLevelList.size()) {
-					tinkerLevelList.add(harvestLevel);
-				}else {
-					if(ModConfig.TINKER_INTEGRATION.tinkerMineLevels) {
-						tinkerLevelList.add(level, harvestLevel);
-						List<Level> newList = tinkerLevelList.subList(level+1, tinkerLevelList.size());
-						if(newList.size() > 0) {
-							for(Level newLevel : newList) {
-								newLevel.setLevel(newLevel.getLevel()+1);
-							}
-						}
-					}
-				}
-			}
-		}else {
-			if(modid != null) {
-				LogManager.getFormatterLogger(modid + "-" + "Levels").warn("Level can not be a negative number, aborting. Please use a level of 0 to add a mine level below stone.");
 			}else {
-				LOG.warn("Level can not be a negative number, aborting. Please use a level of 0 to add a mine level below stone.");
+				if(level.getLevel() > levelList.get(levelList.size()-1).getLevel()+1)
+					level.setLevel(levelList.get(levelList.size()-1).getLevel()+1);
+				levelList.add(level);
+			}
+		}
+	}
+	private static void addTinkerLevels() {
+		for(Level level : addLevelList) {
+			if(level.getLevel() < tinkerLevelList.size()) {
+				List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
+				tinkerLevelList.add(level.getLevel(), level);
+				for(Level shiftedLevel : shiftedLevelList) {
+					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+				}
+			}else {
+				if(level.getLevel() > tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1)
+					level.setLevel(tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1);
+				tinkerLevelList.add(level);
 			}
 		}
 	}

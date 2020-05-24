@@ -53,6 +53,7 @@ public class Main
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 		modChecker = new ModChecker();
+		Levels.preInit();
 		TinkerMineLevelHandler.preInit();
 	}
 	
