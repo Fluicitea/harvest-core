@@ -32,9 +32,5 @@ public class ClientProxy implements IProxy
 	public void init() {}
 
 	@Override
-	public void postInit() {
-		if(ModChecker.isTinkersConstructLoaded) {
-			TinkerMineLevelHandler.addLevelsToBook();
-		}
-	}
+	public void postInit() {}
 }

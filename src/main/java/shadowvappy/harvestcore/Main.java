@@ -63,7 +63,7 @@ public class Main
 	@EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 		MineLevelHandler.postInit();
-		proxy.postInit();
+		TinkerMineLevelHandler.postInit();
 	}
 	
 	@EventHandler

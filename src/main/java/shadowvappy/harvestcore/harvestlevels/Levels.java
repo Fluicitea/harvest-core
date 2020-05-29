@@ -28,7 +28,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.util.text.TextFormatting;
+import shadowvappy.harvestcore.config.ModConfig;
 import shadowvappy.harvestcore.util.LogHelper;
+import shadowvappy.harvestcore.util.ModChecker;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 
 public class Levels 
@@ -53,34 +55,50 @@ public class Levels
 	}
 	
 	public static final void preInit() {
+		if(ModChecker.isTinkersConstructLoaded) {
+			addColorsToLevels();
+			addTinkerLevels();
+		}
 		addVanillaLevels();
-		addTinkerLevels();
 	}
 	
 	private static void setupBaseLevelLists() {
 		/* Add vanilla levels to vanilla level list */
-		level = new Level("Stone", 0, TinkerMaterials.stone.getTextColor());
+		level = new Level("Stone", 0);
 		levelList.add(level);
-		level = new Level("Iron", 1, TinkerMaterials.iron.getTextColor());
+		level = new Level("Iron", 1);
 		levelList.add(level);
-		level = new Level("Diamond", 2, TextFormatting.DARK_AQUA.toString());
+		level = new Level("Diamond", 2);
 		levelList.add(level);
-		level = new Level("Obsidian", 3, TinkerMaterials.obsidian.getTextColor());
+		level = new Level("Obsidian", 3);
 		levelList.add(level);
 		originalLevelList = (List<Level>)((ArrayList<Level>)levelList).clone();
 		
 		/* Add vanilla and tinker levels to tinker level list */
-		level = new Level("Stone", 0, TinkerMaterials.stone.getTextColor());
+		level = new Level("Stone", 0);
 		tinkerLevelList.add(level);
-		level = new Level("Iron", 1, TinkerMaterials.iron.getTextColor());
+		level = new Level("Iron", 1);
 		tinkerLevelList.add(level);
-		level = new Level("Diamond", 2, TextFormatting.DARK_AQUA.toString());
+		level = new Level("Diamond", 2);
 		tinkerLevelList.add(level);
-		level = new Level("Obsidian", 3, TinkerMaterials.obsidian.getTextColor());
+		level = new Level("Obsidian", 3);
 		tinkerLevelList.add(level);
-		level = new Level("Cobalt", 4, TinkerMaterials.cobalt.getTextColor());
+		level = new Level("Cobalt", 4);
 		tinkerLevelList.add(level);
 		originalTinkerLevelList = (List<Level>)((ArrayList<Level>)tinkerLevelList).clone();
+	}
+	
+	private static void addColorsToLevels() {
+		String diamondColor = TextFormatting.AQUA.toString();
+		for(Level level : addLevelListT) {
+			if(level.getColor().equalsIgnoreCase(diamondColor))
+				diamondColor = TextFormatting.DARK_AQUA.toString();
+		}
+		tinkerLevelList.get(0).setColor(TinkerMaterials.stone.getTextColor());
+		tinkerLevelList.get(1).setColor(TinkerMaterials.iron.getTextColor());
+		tinkerLevelList.get(2).setColor(diamondColor);
+		tinkerLevelList.get(3).setColor(TinkerMaterials.obsidian.getTextColor());
+		tinkerLevelList.get(4).setColor(TinkerMaterials.cobalt.getTextColor());
 	}
 	
 	/**
@@ -97,14 +115,14 @@ public class Levels
 		
 		if(level >= 0) {
 			boolean hasLevel = false;
-			for(Level existingLevel : originalTinkerLevelList) {
+			for(Level existingLevel : ModChecker.isTinkersConstructLoaded ? originalTinkerLevelList:originalLevelList) {
 				if(name.equalsIgnoreCase(existingLevel.getName())) {
 					hasLevel = true;
 					break;
 				}
 			}
 			if(hasLevel == false) {
-				for(Level existingLevel : addLevelListT) {
+				for(Level existingLevel : ModChecker.isTinkersConstructLoaded ? addLevelListT:addLevelListV) {
 					if(name.equalsIgnoreCase(existingLevel.getName())) {
 						hasLevel = true;
 						break;
@@ -143,7 +161,8 @@ public class Levels
 					added5++;
 				}
 				addVanillaLevel(name, modid, level, color);
-				addTinkerLevel(name, modid, level, color);
+				if(ModChecker.isTinkersConstructLoaded)
+					addTinkerLevel(name, modid, level, color);
 			}
 		}else {
 			if(modid != null) {
@@ -201,7 +220,7 @@ public class Levels
 	private static void addVanillaLevels() {
 		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListV).clone();
 		for(Level level : addList) {
-			if(level.getLevel() < levelList.size()) {
+			if(level.getLevel() < levelList.size() && ModConfig.addMineLevels) {
 				List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
 				for(Level shiftedLevel : shiftedLevelList) {
 					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
@@ -217,7 +236,7 @@ public class Levels
 	private static void addTinkerLevels() {
 		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListT).clone();
 		for(Level level : addList) {
-			if(level.getLevel() < tinkerLevelList.size()) {
+			if(level.getLevel() < tinkerLevelList.size() && ModConfig.TINKER_INTEGRATION.tinkerMineLevels) {
 				List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
 				for(Level shiftedLevel : shiftedLevelList) {
 					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);

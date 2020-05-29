@@ -45,6 +45,11 @@ public class TinkerMineLevelHandler
 			MinecraftForge.EVENT_BUS.register(new TinkerMineLevelHandler());
 	}
 	
+	public static void postInit() {
+		if(ModChecker.isTinkersConstructLoaded)
+			TinkerMineLevelHandler.addLevelsToBook();
+	}
+	
 	public static void addLevelsToBook() {
 		for(Level level : Levels.tinkerLevelList) {
 			if(level.getColor() != null) {
@@ -68,7 +73,6 @@ public class TinkerMineLevelHandler
 			boolean levelIsVanilla = false;
 			int nonVanillaLevels = 0;
 			for(Level level : Levels.tinkerLevelList) {
-				LOG.info(level.getName() + ": " + level.getLevel());
 				if(level.getName().equalsIgnoreCase(originalLevel.getName())) {
 					if((originalLevel.getLevel()+1)-nonVanillaLevels < Levels.originalTinkerLevelList.size()) {
 						originalLevel = Levels.originalTinkerLevelList.get((originalLevel.getLevel()+1)-nonVanillaLevels);
