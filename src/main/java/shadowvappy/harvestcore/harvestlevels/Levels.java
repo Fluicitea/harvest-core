@@ -122,14 +122,6 @@ public class Levels
 				}
 			}
 			if(hasLevel == false) {
-				for(Level existingLevel : ModChecker.isTinkersConstructLoaded ? addLevelListT:addLevelListV) {
-					if(name.equalsIgnoreCase(existingLevel.getName())) {
-						hasLevel = true;
-						break;
-					}
-				}
-			}
-			if(hasLevel == false) {
 				switch(level) {
 				case 0:
 					level += added0;
@@ -161,8 +153,7 @@ public class Levels
 					added5++;
 				}
 				addVanillaLevel(name, modid, level, color);
-				if(ModChecker.isTinkersConstructLoaded)
-					addTinkerLevel(name, modid, level, color);
+				addTinkerLevel(name, modid, level, color);
 			}
 		}else {
 			if(modid != null) {
@@ -177,6 +168,10 @@ public class Levels
 		boolean hasLevel = false;
 		if(addLevelListV.size() > 0) {
 			for(Level existingLevel : addLevelListV) {
+				if(name.equalsIgnoreCase(existingLevel.getName())) {
+					hasLevel = true;
+					break;
+				}
 				if(level <= existingLevel.getLevel()) {
 					int index = addLevelListV.indexOf(existingLevel);
 					List<Level> shiftedLevelList = addLevelListV.subList(index, addLevelListV.size());
@@ -199,6 +194,10 @@ public class Levels
 		boolean hasLevel = false;
 		if(addLevelListT.size() > 0) {
 			for(Level existingLevel : addLevelListT) {
+				if(name.equalsIgnoreCase(existingLevel.getName())) {
+					hasLevel = true;
+					break;
+				}
 				if(level <= existingLevel.getLevel()) {
 					int index = addLevelListT.indexOf(existingLevel);
 					List<Level> shiftedLevelList = addLevelListT.subList(index, addLevelListT.size());
@@ -220,12 +219,14 @@ public class Levels
 	private static void addVanillaLevels() {
 		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListV).clone();
 		for(Level level : addList) {
-			if(level.getLevel() < levelList.size() && ModConfig.addMineLevels) {
-				List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
-				for(Level shiftedLevel : shiftedLevelList) {
-					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+			if(level.getLevel() < levelList.size()) {
+				if(ModConfig.addMineLevels) {
+					List<Level> shiftedLevelList = levelList.subList(level.getLevel(), levelList.size());
+					for(Level shiftedLevel : shiftedLevelList) {
+						shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+					}
+					levelList.add(level.getLevel(), level);
 				}
-				levelList.add(level.getLevel(), level);
 			}else {
 				if(level.getLevel() > (levelList.get(levelList.size()-1).getLevel()+1))
 					level.setLevel((levelList.get(levelList.size()-1).getLevel()+1));
@@ -236,12 +237,14 @@ public class Levels
 	private static void addTinkerLevels() {
 		List<Level> addList = (List<Level>)((ArrayList<Level>)addLevelListT).clone();
 		for(Level level : addList) {
-			if(level.getLevel() < tinkerLevelList.size() && ModConfig.TINKER_INTEGRATION.tinkerMineLevels) {
-				List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
-				for(Level shiftedLevel : shiftedLevelList) {
-					shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+			if(level.getLevel() < tinkerLevelList.size()) {
+				if(ModConfig.TINKER_INTEGRATION.tinkerMineLevels) {
+					List<Level> shiftedLevelList = tinkerLevelList.subList(level.getLevel(), tinkerLevelList.size());
+					for(Level shiftedLevel : shiftedLevelList) {
+						shiftedLevel.setLevel(shiftedLevel.getLevel()+1);
+					}
+					tinkerLevelList.add(level.getLevel(), level);
 				}
-				tinkerLevelList.add(level.getLevel(), level);
 			}else {
 				if(level.getLevel() > (tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1))
 					level.setLevel((tinkerLevelList.get(tinkerLevelList.size()-1).getLevel()+1));
