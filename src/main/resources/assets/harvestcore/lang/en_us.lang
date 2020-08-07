@@ -2,14 +2,14 @@
 #     Config GUI     #
 ######################
 
-//Config Title
+#Config Title
 harvestcore.config.title=Harvest Core Configuration
 
-//Config General Settings
+#Config General Settings
 harvestcore.general.addminelevels=Add Harvest Levels
 harvestcore.general.addminelevels.tooltip=If true, adds harvest levels before diamond.
 
-//Tinkers Integration Config
+#Tinkers Integration Config
 harvestcore.general.tinker_integration=Tinkers' Integration
 harvestcore.general.tinker_integration.tooltip=Settings that affect integration into Tinkers' Construct.
 harvestcore.general.tinker_integration.tinkerminelevels=Add Tinkers' Harvest Levels

@@ -34,8 +34,7 @@ public class LogHelper
 	 */
 	public static Logger getLogger(@Nullable String modid) {
 		String name = modid != null ? modid:Reference.MODID;
-		Logger logger = LogManager.getFormatterLogger(name);
-		return logger;
+		return LogManager.getFormatterLogger(name);
 	}
 	/**
 	 * Method for generating a logger with name set as the modid with a type label.
@@ -46,7 +45,6 @@ public class LogHelper
 	 */
 	public static Logger getLogger(@Nullable String modid, String type) {
 		String name = modid != null ? modid:Reference.MODID;
-		Logger logger = LogManager.getFormatterLogger(name + ": " + type);
-		return logger;
+		return LogManager.getFormatterLogger(name + ": " + type);
 	}
 }

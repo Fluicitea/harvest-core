@@ -1,33 +1,35 @@
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
-        maven { 
-			name = "ForgeFS"
-			url = "http://files.minecraftforge.net/maven" 
-		}
+        maven {
+            name = 'Forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven-publish'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.2-1.0"
+version = "1.12.2-1.4.11"
 group = "shadowvappy.harvestcore" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "harvestcore"
 
 repositories {
-	maven {
-		name = "CurseForge"
-		url = "https://minecraft.curseforge.com/api/maven/"
-	}
-	maven {
-		// Location of TConstruct files
-		name = "DVS1 repository"
-        url = "http://dvs1.progwml6.com/files/maven"
-	}
+    maven {
+        name = 'CurseForge'
+        url = 'https://minecraft.curseforge.com/api/maven/'
+    }
+    maven {
+        // Location of TConstruct files
+        name = 'DVS1 repository'
+        url = 'http://dvs1.progwml6.com/files/maven'
+    }
 }
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -69,8 +71,8 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-	deobfProvided "slimeknights.mantle:Mantle:1.12-1.3.3.55"
-	deobfProvided "slimeknights:TConstruct:1.12.2-2.12.0.157"
+    deobfProvided 'slimeknights.mantle:Mantle:1.12-1.3.3.55'
+    deobfProvided 'slimeknights:TConstruct:1.12.2-2.13.0.183'
 }
 
 processResources {
@@ -89,5 +91,36 @@ processResources {
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
+
+artifacts {
+    archives deobfJar
+    archives sourcesJar
+}
+
+publishing {
+    tasks.publish.dependsOn 'build'
+    publications {
+        harvestCore(MavenPublication) {
+            artifact(jar)
+            artifact(deobfJar)
+            artifact(sourcesJar)
+        }
+    }
+    repositories {
+        maven {
+            url = 'D:/Documents/Git Repositories/shadowvappy-maven/ShadowVappy.github.io/files/maven'
+        }
     }
 }

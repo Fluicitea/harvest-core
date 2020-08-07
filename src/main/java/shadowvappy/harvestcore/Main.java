@@ -20,39 +20,29 @@
 package shadowvappy.harvestcore;
 
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import shadowvappy.harvestcore.harvestlevels.Levels;
-import shadowvappy.harvestcore.harvestlevels.handlers.MineLevelHandler;
-import shadowvappy.harvestcore.harvestlevels.handlers.TinkerMineLevelHandler;
-import shadowvappy.harvestcore.proxy.IProxy;
+import shadowvappy.harvestcore.common.harvestlevels.Levels;
+import shadowvappy.harvestcore.common.harvestlevels.handlers.MineLevelHandler;
+import shadowvappy.harvestcore.common.harvestlevels.handlers.TinkerMineLevelHandler;
 import shadowvappy.harvestcore.util.ModChecker;
 import shadowvappy.harvestcore.util.Reference;
+import slimeknights.tconstruct.tools.TinkerMaterials;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, 
 acceptedMinecraftVersions = Reference.ACCEPTED_VERSIONS, dependencies = Reference.DEPENDENCIES)
 public class Main 
 {
-	private static ModChecker modChecker;
-	
-	@Instance
-    public static Main instance;
-	
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
-	public static IProxy proxy;
-	
-	{Levels.preLoad();}
+	static {
+		Levels.preLoad();
+	}
 	
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-		modChecker = new ModChecker();
 		Levels.preInit();
 		TinkerMineLevelHandler.preInit();
 	}
